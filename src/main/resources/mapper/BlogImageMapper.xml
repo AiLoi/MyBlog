@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blog.mapper.BlogImageMapper">
+    <resultMap id="BaseResultMap" type="com.blog.entity.pojo.BlogImage">
+        <id column="image_id" jdbcType="INTEGER" property="imageId"/>
+        <result column="image_name" jdbcType="VARCHAR" property="imageName"/>
+        <result column="image_path" jdbcType="VARCHAR" property="imagePath"/>
+        <result column="image_url" jdbcType="VARCHAR" property="imageUrl"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        image_id, image_name, image_path, image_url
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from blog_image
+        where image_id = #{imageId,jdbcType=INTEGER}
+    </select>
+    <select id="selectArticleImagePath" resultType="java.lang.String" parameterType="java.lang.String">
+        SELECT i.image_path
+        FROM blog_image i
+        WHERE i.image_name = #{imageName}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from blog_image
+        where image_id = #{imageId,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="com.blog.entity.pojo.BlogImage">
+        insert into blog_image (image_id, image_name, image_path,
+                                image_url)
+        values (#{imageId,jdbcType=INTEGER}, #{imageName,jdbcType=VARCHAR}, #{imagePath,jdbcType=VARCHAR},
+                #{imageUrl,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.blog.entity.pojo.BlogImage">
+        insert into blog_image
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="imageId != null">
+                image_id,
+            </if>
+            <if test="imageName != null">
+                image_name,
+            </if>
+            <if test="imagePath != null">
+                image_path,
+            </if>
+            <if test="imageUrl != null">
+                image_url,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="imageId != null">
+                #{imageId,jdbcType=INTEGER},
+            </if>
+            <if test="imageName != null">
+                #{imageName,jdbcType=VARCHAR},
+            </if>
+            <if test="imagePath != null">
+                #{imagePath,jdbcType=VARCHAR},
+            </if>
+            <if test="imageUrl != null">
+                #{imageUrl,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="insertArticleImage" parameterType="com.blog.entity.pojo.BlogImage">
+        INSERT INTO blog_image(image_name, image_path, image_url)
+        VALUES (#{imageName}, #{imagePath}, #{imageUrl})
+    </insert>
+    <insert id="insertArticleContent">
+        INSERT INTO blog_article(title, content, user_id)
+        VALUES (#{title}, #{content}, #{userId})
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.blog.entity.pojo.BlogImage">
+        update blog_image
+        <set>
+            <if test="imageName != null">
+                image_name = #{imageName,jdbcType=VARCHAR},
+            </if>
+            <if test="imagePath != null">
+                image_path = #{imagePath,jdbcType=VARCHAR},
+            </if>
+            <if test="imageUrl != null">
+                image_url = #{imageUrl,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where image_id = #{imageId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.blog.entity.pojo.BlogImage">
+        update blog_image
+        set image_name = #{imageName,jdbcType=VARCHAR},
+            image_path = #{imagePath,jdbcType=VARCHAR},
+            image_url  = #{imageUrl,jdbcType=VARCHAR}
+        where image_id = #{imageId,jdbcType=INTEGER}
+    </update>
+</mapper>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blog.mapper.TechnologyStackMapper">
+  <resultMap id="BaseResultMap" type="com.blog.entity.pojo.TechnologyStack">
+    <id column="lan_id" jdbcType="INTEGER" property="lanId" />
+    <result column="lan_code" jdbcType="VARCHAR" property="lanCode" />
+    <result column="lan_name" jdbcType="VARCHAR" property="lanName" />
+    <result column="lan_type_id" jdbcType="INTEGER" property="lanTypeId" />
+    <result column="lan_type_name" jdbcType="VARCHAR" property="lanTypeName" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    lan_id, lan_code, lan_name, lan_type_id, lan_type_name
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from technology_stack
+    where lan_id = #{lanId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from technology_stack
+    where lan_id = #{lanId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.blog.entity.pojo.TechnologyStack">
+    insert into technology_stack (lan_id, lan_code, lan_name, 
+      lan_type_id, lan_type_name)
+    values (#{lanId,jdbcType=INTEGER}, #{lanCode,jdbcType=VARCHAR}, #{lanName,jdbcType=VARCHAR}, 
+      #{lanTypeId,jdbcType=INTEGER}, #{lanTypeName,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.blog.entity.pojo.TechnologyStack">
+    insert into technology_stack
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="lanId != null">
+        lan_id,
+      </if>
+      <if test="lanCode != null">
+        lan_code,
+      </if>
+      <if test="lanName != null">
+        lan_name,
+      </if>
+      <if test="lanTypeId != null">
+        lan_type_id,
+      </if>
+      <if test="lanTypeName != null">
+        lan_type_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="lanId != null">
+        #{lanId,jdbcType=INTEGER},
+      </if>
+      <if test="lanCode != null">
+        #{lanCode,jdbcType=VARCHAR},
+      </if>
+      <if test="lanName != null">
+        #{lanName,jdbcType=VARCHAR},
+      </if>
+      <if test="lanTypeId != null">
+        #{lanTypeId,jdbcType=INTEGER},
+      </if>
+      <if test="lanTypeName != null">
+        #{lanTypeName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.blog.entity.pojo.TechnologyStack">
+    update technology_stack
+    <set>
+      <if test="lanCode != null">
+        lan_code = #{lanCode,jdbcType=VARCHAR},
+      </if>
+      <if test="lanName != null">
+        lan_name = #{lanName,jdbcType=VARCHAR},
+      </if>
+      <if test="lanTypeId != null">
+        lan_type_id = #{lanTypeId,jdbcType=INTEGER},
+      </if>
+      <if test="lanTypeName != null">
+        lan_type_name = #{lanTypeName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where lan_id = #{lanId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.blog.entity.pojo.TechnologyStack">
+    update technology_stack
+    set lan_code = #{lanCode,jdbcType=VARCHAR},
+      lan_name = #{lanName,jdbcType=VARCHAR},
+      lan_type_id = #{lanTypeId,jdbcType=INTEGER},
+      lan_type_name = #{lanTypeName,jdbcType=VARCHAR}
+    where lan_id = #{lanId,jdbcType=INTEGER}
+  </update>
+</mapper>

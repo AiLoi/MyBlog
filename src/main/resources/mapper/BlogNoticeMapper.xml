@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blog.mapper.BlogNoticeMapper">
+    <resultMap id="BaseResultMap" type="com.blog.entity.pojo.BlogNotice">
+        <id column="notice_id" jdbcType="INTEGER" property="noticeId"/>
+        <result column="notice_title" jdbcType="VARCHAR" property="noticeTitle"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="is_top" jdbcType="INTEGER" property="isTop"/>
+        <result column="is_delete" jdbcType="INTEGER" property="isDelete"/>
+    </resultMap>
+    <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.blog.entity.pojo.BlogNotice">
+        <result column="notice_content" jdbcType="LONGVARCHAR" property="noticeContent"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        notice_id, notice_title, create_time, is_top, is_delete
+    </sql>
+    <sql id="Blob_Column_List">
+        notice_content
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from blog_notice
+        where notice_id = #{noticeId,jdbcType=INTEGER}
+    </select>
+    <select id="selectBlogNotice" resultType="com.blog.entity.pojo.BlogNotice">
+        SELECT notice_id,
+               notice_title,
+               notice_content,
+               create_time,
+               is_top,
+               is_delete
+        FROM blog_notice
+        WHERE is_delete = 0
+        ORDER BY is_top DESC,
+                 create_time DESC
+    </select>
+    <select id="selectHotKetWord" resultType="java.lang.String">
+        select distinct *
+        from (SELECT ba.key_word
+              FROM blog_article ba
+              WHERE is_delete = 0
+              ORDER BY ba.visit_count DESC,
+                       ba.create_time DESC
+              LIMIT 0,20) b
+
+    </select>
+    <select id="selectNewArticle" resultType="com.blog.entity.pojo.BlogArticle">
+        SELECT article_id,
+               title,
+               user_id,
+               create_time,
+               visit_count,
+               key_word,
+               is_delete,
+               is_top,
+               article_content,
+               markdown_content
+        FROM blog_article
+        WHERE is_delete = 0
+        ORDER BY create_time DESC
+        limit 0,10
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from blog_notice
+        where notice_id = #{noticeId,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="com.blog.entity.pojo.BlogNotice">
+        insert into blog_notice (notice_id, notice_title, create_time,
+                                 is_top, is_delete, notice_content)
+        values (#{noticeId,jdbcType=INTEGER}, #{noticeTitle,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
+                #{isTop,jdbcType=INTEGER}, #{isDelete,jdbcType=INTEGER}, #{noticeContent,jdbcType=LONGVARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.blog.entity.pojo.BlogNotice">
+        insert into blog_notice
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="noticeId != null">
+                notice_id,
+            </if>
+            <if test="noticeTitle != null">
+                notice_title,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="isTop != null">
+                is_top,
+            </if>
+            <if test="isDelete != null">
+                is_delete,
+            </if>
+            <if test="noticeContent != null">
+                notice_content,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="noticeId != null">
+                #{noticeId,jdbcType=INTEGER},
+            </if>
+            <if test="noticeTitle != null">
+                #{noticeTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isTop != null">
+                #{isTop,jdbcType=INTEGER},
+            </if>
+            <if test="isDelete != null">
+                #{isDelete,jdbcType=INTEGER},
+            </if>
+            <if test="noticeContent != null">
+                #{noticeContent,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.blog.entity.pojo.BlogNotice">
+        update blog_notice
+        <set>
+            <if test="noticeTitle != null">
+                notice_title = #{noticeTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isTop != null">
+                is_top = #{isTop,jdbcType=INTEGER},
+            </if>
+            <if test="isDelete != null">
+                is_delete = #{isDelete,jdbcType=INTEGER},
+            </if>
+            <if test="noticeContent != null">
+                notice_content = #{noticeContent,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where notice_id = #{noticeId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.blog.entity.pojo.BlogNotice">
+        update blog_notice
+        set notice_title   = #{noticeTitle,jdbcType=VARCHAR},
+            create_time    = #{createTime,jdbcType=TIMESTAMP},
+            is_top         = #{isTop,jdbcType=INTEGER},
+            is_delete      = #{isDelete,jdbcType=INTEGER},
+            notice_content = #{noticeContent,jdbcType=LONGVARCHAR}
+        where notice_id = #{noticeId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.blog.entity.pojo.BlogNotice">
+        update blog_notice
+        set notice_title = #{noticeTitle,jdbcType=VARCHAR},
+            create_time  = #{createTime,jdbcType=TIMESTAMP},
+            is_top       = #{isTop,jdbcType=INTEGER},
+            is_delete    = #{isDelete,jdbcType=INTEGER}
+        where notice_id = #{noticeId,jdbcType=INTEGER}
+    </update>
+</mapper>

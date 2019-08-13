@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="../../../css/bootstrap3.3.7.css">
+    <link rel="stylesheet" type="text/css" href="../../../layer/theme/default/layer.css">
+
+    <script type="text/javascript" src="../../../js/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="../../../js/common.js"></script>
+    <script type="text/javascript" src="../../../layui/layui.js"></script>
+</head>
+<body>
+<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+    <form class="form-horizontal" id="form" method="post" action="/excels" onsubmit="return false" enctype="multipart/form-data">
+        <fieldset>
+            <input id="token" name="token" hidden="true">
+            <div class="form-group">
+                <label class="col-md-2 control-label">sql</label>
+                <div class="col-md-10 form-inline">
+						<textarea rows="8" class="form-control" cols="120" name="sql" id="sql">
+
+						</textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-md-2 control-label">导出文件名</label>
+                <div class="col-md-10">
+                    <input class="form-control" placeholder="文件名" type="text"
+                           maxlength="200" name="fileName" id="fileName">
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <div class="row" align="center">
+                    <div class="col-md-12">
+                        <button class='btn btn-primary' permission="excel:down" type="submit" onclick="download()">
+                            <i class='layui-icon'>&#xe601;</i>导出
+                        </button>
+                        <button class='btn btn-primary' permission="excel:show:datas" type="submit" onclick="showDatas()">
+                            <i class='layui-icon'>&#xe62d;</i>页面显示数据
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="datas">
+                <table class="table">
+                </table>
+            </div>
+
+        </fieldset>
+    </form>
+</div>
+
+</body>
+</html>

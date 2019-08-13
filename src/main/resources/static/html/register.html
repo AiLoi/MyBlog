@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>注册</title>
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <link rel="stylesheet" href="../layer/theme/default/layer.css">
+    <script src="../js/jquery-3.3.1.js"></script>
+    <script src="../js/bootstrap.js"></script>
+
+    <script src="../layer/layer.js"></script>
+
+    <link rel="icon" href="../img/ico.png" type="image/x-icon">
+
+    <style>
+        #pcdiv {
+            background-repeat: no-repeat, no-repeat;
+            background-position: center center, center center;
+            background-size: cover, cover;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        #center {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: auto;
+        }
+
+    </style>
+    <script>
+
+        //监控当前分辨率
+        var maxWidth = window.screen.width;
+
+        $(function () {
+            //如果是手机
+            if (maxWidth < 1360) {
+                document.getElementById("pcdiv").style.display = 'none';
+                document.getElementById("phonediv").style.display = null;
+            }
+        });
+
+        //手机号验证
+        function phone() {
+            var phoneReg = /^[1][346578][0-9]{9}$/;
+
+            var phonenum = document.getElementById("phone").value;
+            if (phoneReg.test(phonenum)) {
+            } else {
+                document.getElementById("phone").placeholder = "您输入的手机号不符合规则";
+                document.getElementById("phone").value = null;
+                document.getElementById("sub").disabled = true;   //手机号为空时灰化提交按钮
+            }
+        }
+
+        $(function () {
+            $(".sub").click(function (message) {
+
+
+             //邮箱正则
+                var emailReg = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
+                //手机正则
+                var phoneReg = /^[1][346578][0-9]{9}$/;
+
+                //密码正则，长度大于6位，必须包含大写和小写字符
+                var pPattern = /^.*(?=.{6,16})(?=.*\d)(?=.*[A-Z]+)(?=.*[a-z]+)$/;
+
+                var username = $("#pc-username");
+                var password = $("#pc-password");
+                var nickname = $("#pc-nickname");
+                var sec_password = $("#pc-sec-password");
+                var phone = $("#pc-phone");
+
+                if (!isNull(password)) {
+                    layer.alert("密码不能为空",{icon:5});
+                    return;
+                }
+
+                if (pPattern.test(password.val())) {
+                    layer.alert("密码格式不正确，要求长度6-16位，必须包含大写和小写字符和数字",{icon:5});
+                    return;
+                }
+                if(password.val()!==sec_password.val()) {
+                    layer.alert("请输入相同的密码",{icon:5});
+                    return;
+                }
+
+                if (!isNull(username)) {
+                    layer.alert("用户名不能为空",{icon:5});
+                    return;
+                }
+                if (!emailReg.test(username.val())) {
+                    layer.alert("邮箱格式不正确",{icon:5});
+                    return;
+                }
+
+
+                if (!isNull(nickname)) {
+                    layer.alert("昵称不能为空",{icon:5});
+                    return;
+                }
+                if (!isNull(phone)) {
+                    layer.alert("手机号不能为空",{icon:5});
+                    return;
+                }
+
+                if (!phoneReg.test(phone.val())) {
+                    layer.alert("手机格式不正确",{icon:5});
+                    return;
+                }
+
+
+                var userinfo = {
+                    "username": username.val(),
+                    "password": password.val(),
+                    "nickname": nickname.val(),
+                    "phone": phone.val()
+                };
+
+
+                $.ajax({
+                    url: "/blog/user/registered",
+                    type: "post",
+                    contentType: "application/json;charset=UTF-8",
+                    data: JSON.stringify(userinfo),
+                    success: function (data) {
+
+                        if (data.data.status)
+                            window.location.href = "/user/login";
+                        else {
+                            layer.alert(data.data.msg,{icon:5});
+                        }
+
+                    }
+                })
+
+
+            });
+
+
+            $(".ph-sub").click(function () {
+                //邮箱正则
+                var emailReg = /^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,4}$/;
+                //手机正则
+                var phoneReg = /^[1][346578][0-9]{9}$/;
+
+                //密码正则，长度大于6位，必须包含大写和小写字符
+                var pPattern = /^.*(?=.{6,16})(?=.*\d)(?=.*[A-Z]+)(?=.*[a-z]+)$/;
+
+                var username = $("#ph-username");
+                var password = $("#ph-password");
+                var nickname = $("#ph-nickname");
+                var phone = $("#ph-phone");
+
+                if (!isNull(username)) {
+                    layer.alert("用户名不能为空",{icon:5});
+                    return;
+                }
+                if (!emailReg.test(username.val())) {
+                    layer.alert("邮箱格式不正确",{icon:5});
+                    return;
+                }
+
+                if (!isNull(password)) {
+                    layer.alert("密码不能为空",{icon:5});
+                    return;
+                }
+
+                if (pPattern.test(password.val())) {
+                    layer.alert("密码格式不正确，要求长度6-16位，必须包含大写和小写字符和数字",{icon:5});
+                    return;
+                }
+                if (!isNull(nickname)) {
+                    layer.alert("昵称不能为空",{icon:5});
+                    return;
+                }
+                if (!isNull(phone)) {
+                    layer.alert("手机号不能为空",{icon:5});
+                    return;
+                }
+
+                if (!phoneReg.test(phone.val())) {
+                    layer.alert("手机格式不正确",{icon:5});
+                    return;
+                }
+
+                var userinfo = {
+                    "username": username.val(),
+                    "password": password.val(),
+                    "nickname": nickname.val(),
+                    "phone": phone.val()
+                };
+                $.ajax({
+                    url: "/blog/user/registered",
+                    type: "post",
+                    contentType: "application/json;charset=UTF-8",
+                    data: JSON.stringify(userinfo),
+                    success: function (data) {
+                        if (data.data)
+                            window.location.href = "/user/login";
+                    }
+                })
+
+
+            })
+
+
+        });
+
+
+        function isNull(e) {
+            return $(e).val() !== null && $(e).val() !== "";
+        }
+
+
+    </script>
+
+
+</head>
+<body>
+<div id="pcdiv" style="background-image: url('../img/0.jpg')">
+    <div id="center" style="width: 640px;height: auto;background-color: white;">
+        <div style="margin: 9% 11% 2%">
+            <a href="/index"><img style="width: 35%;height: auto" src="../img/logo.jpg" alt="CodeBlog"></a>
+            <div style="margin-top: 5%"><h5><strong>创建一个用户 ！</strong></h5></div>
+
+            <div class="form-group " style="margin-top: 5%">
+                <label>
+                    <input type="email" placeholder="电子邮箱(必填)" id="pc-username" class="form-control username control-label"
+                           style="width: 500px">
+                </label> <br>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <input type="password" placeholder="密码(必填)" id="pc-password" class="form-control password control-label"
+                           style="width: 500px">
+                </label> <br>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <input type="password" placeholder="确认密码(必填)" id="pc-sec-password" class="form-control  control-label"
+                           style="width: 500px">
+                </label> <br>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <input type="text" placeholder="昵称(必填)" id="pc-nickname" class="form-control nickname control-label"
+                           style="width: 500px">
+                </label> <br>
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="text" id="pc-phone" placeholder="联系电话(必填)" class="form-control control-label phone"
+                           style="width: 500px">
+                </label>
+            </div>
+
+            <div>
+                <div style="margin-top: 3%;" align="right">
+                    <button style="width: 35%" class="btn btn-primary sub">提交</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="phonediv" style="margin-left: 6%;margin-top: 5%;margin-right: 6%;display: none">
+    <div>
+        <a href="index.html"><img style="width: 35%;height: auto" src="../img/logo.jpg" alt="CodeBlog"></a>
+    </div>
+    <div style="margin-top: 5%"><h4><strong>注册</strong></h4></div>
+    <div style="margin-top: 5%">
+        <label>
+            <input type="email" id="ph-username" style="border: 0;width: 100%;font-size: 15px" placeholder="邮箱">
+        </label>
+        <hr style="background-color: #aaceff">
+        <label>
+            <input type="password" id="ph-password" style="border: 0;width: 100%;font-size: 15px" placeholder="密码">
+        </label>
+        <hr style="background-color: #aaceff">
+        <label>
+            <input type="password" id="ph-sec-password" style="border: 0;width: 100%;font-size: 15px" placeholder="确认密码">
+        </label>
+        <hr style="background-color: #aaceff">
+        <label>
+            <input type="text" id="ph-nickname" style="border: 0;width: 100%;font-size: 15px" placeholder="昵称">
+        </label>
+        <hr style="background-color: #aaceff">
+        <label>
+            <input type="text" id="ph-phone" style="border: 0;width: 100%;font-size: 15px" placeholder="联系电话">
+        </label>
+        <hr style="background-color: #aaceff">
+    </div>
+    <div>
+        <div style="margin-top: 3%;" align="right">
+            <button style="width: 35%" class="btn btn-primary ph-sub">提交</button>
+        </div>
+    </div>
+</div>
+
+</body>
+
+</html>

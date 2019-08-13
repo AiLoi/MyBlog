@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blog.mapper.BlogPermissionMapper">
+  <resultMap id="BaseResultMap" type="com.blog.entity.pojo.BlogPermission">
+    <id column="permission_id" jdbcType="INTEGER" property="permissionId" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="permission_status" jdbcType="INTEGER" property="permissionStatus" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    permission_id, url, name, permission_status
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from blog_permission
+    where permission_id = #{permissionId,jdbcType=INTEGER}
+  </select>
+
+    <select id="selectRolePermission" resultType="com.blog.security.SecurityRolePermission">
+      SELECT
+        p.url,
+        r.role_name
+      FROM
+        role_permission rp
+          LEFT JOIN blog_role r ON rp.role_id = r.role_id
+          LEFT JOIN blog_permission p ON rp.permission_id = p.permission_id
+    </select>
+
+    <select id="selectAllPage" resultType="java.lang.String">
+      SELECT
+        bp.url
+      FROM
+        blog_permission bp
+      WHERE
+        permission_status = 0
+        AND bp.is_page = 1
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from blog_permission
+    where permission_id = #{permissionId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.blog.entity.pojo.BlogPermission">
+    insert into blog_permission (permission_id, url, name, 
+      permission_status)
+    values (#{permissionId,jdbcType=INTEGER}, #{url,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{permissionStatus,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.blog.entity.pojo.BlogPermission">
+    insert into blog_permission
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="permissionId != null">
+        permission_id,
+      </if>
+      <if test="url != null">
+        url,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="permissionStatus != null">
+        permission_status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="permissionId != null">
+        #{permissionId,jdbcType=INTEGER},
+      </if>
+      <if test="url != null">
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="permissionStatus != null">
+        #{permissionStatus,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.blog.entity.pojo.BlogPermission">
+    update blog_permission
+    <set>
+      <if test="url != null">
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="permissionStatus != null">
+        permission_status = #{permissionStatus,jdbcType=INTEGER},
+      </if>
+    </set>
+    where permission_id = #{permissionId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.blog.entity.pojo.BlogPermission">
+    update blog_permission
+    set url = #{url,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      permission_status = #{permissionStatus,jdbcType=INTEGER}
+    where permission_id = #{permissionId,jdbcType=INTEGER}
+  </update>
+</mapper>

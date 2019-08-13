@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <link rel="icon" href="../img/ico.png" type="image/x-icon">
+    <title>getToken</title>
+
+    <script type="text/javascript"
+            src="//connect.qq.com/qc_jssdk.js" charset="utf-8" data-callback="true"></script>
+
+
+    <script type="text/javascript">
+
+        if(QC.Login.check()) { //如果已登录
+            QC.Login.getMe(function(openId, accessToken) {
+                //本地存储登录返回的openid和access_token
+                localStorage.setItem("access_token", accessToken);
+                localStorage.setItem("openid", openId);
+            });
+        }
+    </script>
+</head>
+<body>
+</body>
+</html>

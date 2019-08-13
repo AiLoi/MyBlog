@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blog.mapper.BlogArticleMapper">
+    <resultMap id="BaseResultMap" type="com.blog.entity.pojo.BlogArticle">
+        <id column="article_id" jdbcType="INTEGER" property="articleId"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="visit_count" jdbcType="INTEGER" property="visitCount"/>
+        <result column="comment_count" jdbcType="INTEGER" property="commentCount"/>
+        <result column="key_word" jdbcType="VARCHAR" property="keyWord"/>
+        <result column="is_delete" jdbcType="INTEGER" property="isDelete"/>
+        <result column="is_top" jdbcType="INTEGER" property="isTop"/>
+    </resultMap>
+    <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.blog.entity.pojo.BlogArticle">
+        <result column="article_content" jdbcType="VARCHAR" property="articleContent"/>
+        <result column="markdown_content" jdbcType="VARCHAR" property="markdownContent"/>
+    </resultMap>
+
+
+    <resultMap id="ArticleVoResultMap" type="com.blog.entity.vo.BlogArticleVo" extends="ResultMapWithBLOBs">
+        <association property="blogUser" javaType="com.blog.security.SecurityBlogUser">
+            <id column="user_id" jdbcType="INTEGER" property="userId"/>
+            <result column="username" jdbcType="VARCHAR" property="username"/>
+            <result column="password" jdbcType="VARCHAR" property="password"/>
+            <result column="nickname" jdbcType="VARCHAR" property="nickname"/>
+            <result column="qq_nickname" jdbcType="VARCHAR" property="qqNickname"/>
+            <result column="wechat_nickename" jdbcType="VARCHAR" property="wechatNickename"/>
+            <result column="birth_date" jdbcType="DATE" property="birthDate"/>
+            <result column="sex" property="sex" jdbcType="INTEGER" javaType="INTEGER"
+                    typeHandler="com.blog.handler.SexHandler"/>
+            <result column="figure_url" jdbcType="VARCHAR" property="figureUrl"/>
+            <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+            <result column="email" jdbcType="VARCHAR" property="email"/>
+            <result column="phone" jdbcType="VARCHAR" property="phone"/>
+            <result column="user_status" jdbcType="INTEGER" property="userStatus"
+                    typeHandler="com.blog.handler.EnableHandler"/>
+            <result column="last_password_reset_date" jdbcType="TIMESTAMP" property="lastPasswordResetDate"/>
+            <result column="last_user_login_date" jdbcType="TIMESTAMP" property="lastUserLoginDate"/>
+        </association>
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+        article_id, title, user_id, create_time, visit_count, key_word, is_delete
+    </sql>
+    <sql id="Blob_Column_List">
+        article_content, markdown_content
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from blog_article
+        where article_id = #{articleId,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectIndexBlogArticle" resultType="com.blog.entity.vo.BlogArticleVo">
+        SELECT ba.article_id,
+               ba.title,
+               ba.user_id,
+               ba.create_time,
+               ba.visit_count,
+               ba.key_word,
+               ba.is_delete,
+               ba.is_top,
+               ba.article_content,
+               ba.markdown_content,
+               ba.comment_count
+        FROM blog_article ba
+        WHERE ba.is_delete = 0
+        ORDER BY ba.is_top DESC
+               , ba.create_time DESC
+        LIMIT 0,6
+    </select>
+    <select id="selectBLogArticleById" resultType="com.blog.entity.vo.BlogArticleVo">
+        SELECT ba.article_id,
+               ba.title,
+               ba.user_id,
+               ba.create_time,
+               ba.visit_count,
+               ba.key_word,
+               ba.is_delete,
+               ba.is_top,
+               ba.article_content,
+               ba.markdown_content,
+               ba.comment_count
+        FROM blog_article ba
+        WHERE ba.article_id = #{articleId,jdbcType=INTEGER}
+    </select>
+    <select id="selectBlogArticleLikeKeyWord" resultMap="ArticleVoResultMap" parameterType="java.util.Map">
+        SELECT ba.article_id,
+               ba.title,
+               ba.create_time,
+               ba.visit_count,
+               ba.comment_count,
+               ba.key_word,
+               ba.is_delete,
+               ba.is_top,
+               ba.article_content,
+               ba.markdown_content,
+               bu.user_id,
+               bu.username,
+               bu.PASSWORD,
+               bu.nickname,
+               bu.qq_nickname,
+               bu.wechat_nickename,
+               bu.birth_date,
+               bu.sex,
+               bu.figure_url,
+               bu.create_date,
+               bu.email,
+               bu.phone,
+               bu.user_status,
+               bu.last_password_reset_date,
+               bu.last_user_login_date
+        FROM blog_article ba
+                 LEFT JOIN blog_user bu ON ba.user_id = bu.user_id
+        WHERE ba.key_word REGEXP #{keyWords,jdbcType=VARCHAR}
+          AND ba.article_id != #{articleId,jdbcType=INTEGER}
+          AND is_delete = 0
+        ORDER BY RAND()
+        LIMIT 0,5
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from blog_article
+        where article_id = #{articleId,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="com.blog.entity.pojo.BlogArticle">
+        insert into blog_article (article_id, title, user_id,
+                                  create_time, visit_count, key_word,
+                                  is_delete, article_content, markdown_content)
+        values (#{articleId,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER},
+                #{createTime,jdbcType=TIMESTAMP}, #{visitCount,jdbcType=INTEGER}, #{keyWord,jdbcType=VARCHAR},
+                #{isDelete,jdbcType=INTEGER}, #{articleContent,jdbcType=LONGVARCHAR}, #{markdownContent})
+    </insert>
+    <insert id="insertSelective" parameterType="com.blog.entity.vo.BlogArticleVo">
+        insert into blog_article
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="articleId != null">
+                article_id,
+            </if>
+            <if test="title != null">
+                title,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="visitCount != null">
+                visit_count,
+            </if>
+            <if test="keyWord != null">
+                key_word,
+            </if>
+            <if test="isDelete != null">
+                is_delete,
+            </if>
+            <if test="articleContent != null">
+                article_content,
+            </if>
+            <if test="markdownContent != null">
+                markdown_content,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="articleId != null">
+                #{articleId,jdbcType=INTEGER},
+            </if>
+            <if test="title != null">
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="visitCount != null">
+                #{visitCount,jdbcType=INTEGER},
+            </if>
+            <if test="keyWord != null">
+                #{keyWord,jdbcType=VARCHAR},
+            </if>
+            <if test="isDelete != null">
+                #{isDelete,jdbcType=INTEGER},
+            </if>
+            <if test="articleContent != null">
+                #{articleContent,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="markdownContent != null">
+                #{markdownContent,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.blog.entity.pojo.BlogArticle">
+        update blog_article
+        <set>
+            <if test="title != null">
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="visitCount != null">
+                visit_count = #{visitCount,jdbcType=INTEGER},
+            </if>
+            <if test="keyWord != null">
+                key_word = #{keyWord,jdbcType=VARCHAR},
+            </if>
+            <if test="isDelete != null">
+                is_delete = #{isDelete,jdbcType=INTEGER},
+            </if>
+            <if test="articleContent != null">
+                article_content = #{articleContent,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="markdownContent != null">
+                markdown_content = #{markdownContent,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where article_id = #{articleId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.blog.entity.pojo.BlogArticle">
+        update blog_article
+        set title           = #{title,jdbcType=VARCHAR},
+            user_id         = #{userId,jdbcType=INTEGER},
+            create_time     = #{createTime,jdbcType=TIMESTAMP},
+            visit_count     = #{visitCount,jdbcType=INTEGER},
+            key_word        = #{keyWord,jdbcType=VARCHAR},
+            is_delete       = #{isDelete,jdbcType=INTEGER},
+            article_content = #{article_content,jdbcType=LONGVARCHAR},
+            markdown_content=#{markdown_content,jdbcType=LONGVARCHAR}
+        where article_id = #{articleId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.blog.entity.pojo.BlogArticle">
+        update blog_article
+        set title       = #{title,jdbcType=VARCHAR},
+            user_id     = #{userId,jdbcType=INTEGER},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            visit_count = #{visitCount,jdbcType=INTEGER},
+            key_word    = #{keyWord,jdbcType=VARCHAR},
+            is_delete   = #{isDelete,jdbcType=INTEGER}
+        where article_id = #{articleId,jdbcType=INTEGER}
+    </update>
+    <update id="updateArticleVisitCount">
+        update blog_article ba
+        set ba.visit_count = ba.visit_count + 1
+        where ba.article_id = #{articleId}
+    </update>
+    <update id="updateArticleCommentCount">
+        update blog_article ba
+        set ba.comment_count = ba.comment_count + 1
+        where ba.article_id = #{articleId}
+    </update>
+    <update id="updateArticleCommentCountForReply">
+        update blog_article ba
+        set ba.comment_count = ba.comment_count + 1
+        where ba.article_id = (SELECT article_id
+                               FROM blog_comment bc
+                               WHERE bc.comment_id = (select comment_id from reply_comment where reply_id = #{replyId}))
+    </update>
+
+
+</mapper>

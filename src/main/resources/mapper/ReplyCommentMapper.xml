@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blog.mapper.ReplyCommentMapper">
+    <resultMap id="BaseResultMap" type="com.blog.entity.pojo.ReplyComment">
+        <id column="reply_id" jdbcType="INTEGER" property="replyId"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="reply_user_id" jdbcType="INTEGER" property="replyUserId"/>
+        <result column="comment_id" jdbcType="INTEGER" property="commentId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="is_delete" jdbcType="INTEGER" property="isDelete"/>
+    </resultMap>
+    <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.blog.entity.pojo.ReplyComment">
+        <result column="reply_content" jdbcType="LONGVARCHAR" property="replyContent"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        reply_id, user_id, reply_user_id, comment_id, create_time, is_delete
+    </sql>
+    <sql id="Blob_Column_List">
+        reply_content
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from reply_comment
+        where reply_id = #{replyId,jdbcType=INTEGER}
+    </select>
+    <select id="selectReplyCommentByCommentId" resultType="com.blog.entity.vo.ReplyCommentVo">
+        select reply_id,
+               user_id,
+               reply_user_id,
+               comment_id,
+               create_time,
+               is_delete,
+               reply_content
+        from reply_comment
+        where is_delete = 0
+          and comment_id = #{commentId}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from reply_comment
+        where reply_id = #{replyId,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="com.blog.entity.pojo.ReplyComment">
+        insert into reply_comment (reply_id, user_id, reply_user_id,
+                                   comment_id, create_time, is_delete,
+                                   reply_content)
+        values (#{replyId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{replyUserId,jdbcType=INTEGER},
+                #{commentId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{isDelete,jdbcType=INTEGER},
+                #{replyContent,jdbcType=LONGVARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.blog.entity.pojo.ReplyComment">
+        insert into reply_comment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="replyId != null">
+                reply_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="replyUserId != null">
+                reply_user_id,
+            </if>
+            <if test="commentId != null">
+                comment_id,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="isDelete != null">
+                is_delete,
+            </if>
+            <if test="replyContent != null">
+                reply_content,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="replyId != null">
+                #{replyId,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="replyUserId != null">
+                #{replyUserId,jdbcType=INTEGER},
+            </if>
+            <if test="commentId != null">
+                #{commentId,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isDelete != null">
+                #{isDelete,jdbcType=INTEGER},
+            </if>
+            <if test="replyContent != null">
+                #{replyContent,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <insert id="insertReplyComment" useGeneratedKeys="true" keyProperty="replyId" keyColumn="replyId">
+        insert into reply_comment(reply_content, user_id, reply_user_id, comment_id)
+        VALUES (#{replyContent}, #{userId}, #{replyUserId}, #{commentId})
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.blog.entity.pojo.ReplyComment">
+        update reply_comment
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="replyUserId != null">
+                reply_user_id = #{replyUserId,jdbcType=INTEGER},
+            </if>
+            <if test="commentId != null">
+                comment_id = #{commentId,jdbcType=INTEGER},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isDelete != null">
+                is_delete = #{isDelete,jdbcType=INTEGER},
+            </if>
+            <if test="replyContent != null">
+                reply_content = #{replyContent,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where reply_id = #{replyId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.blog.entity.pojo.ReplyComment">
+        update reply_comment
+        set user_id       = #{userId,jdbcType=INTEGER},
+            reply_user_id = #{replyUserId,jdbcType=INTEGER},
+            comment_id    = #{commentId,jdbcType=INTEGER},
+            create_time   = #{createTime,jdbcType=TIMESTAMP},
+            is_delete     = #{isDelete,jdbcType=INTEGER},
+            reply_content = #{replyContent,jdbcType=LONGVARCHAR}
+        where reply_id = #{replyId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.blog.entity.pojo.ReplyComment">
+        update reply_comment
+        set user_id       = #{userId,jdbcType=INTEGER},
+            reply_user_id = #{replyUserId,jdbcType=INTEGER},
+            comment_id    = #{commentId,jdbcType=INTEGER},
+            create_time   = #{createTime,jdbcType=TIMESTAMP},
+            is_delete     = #{isDelete,jdbcType=INTEGER}
+        where reply_id = #{replyId,jdbcType=INTEGER}
+    </update>
+</mapper>

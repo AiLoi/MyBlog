@@ -1,0 +1,75 @@
+/*淘宝CSS格式化代码*/
+
+
+
+h1, h2, h3, h4, h5, h6 {
+    font-size: 100%;
+}
+
+address, cite, dfn, em, var {
+    font-style: normal;
+}
+
+code, kbd, pre, samp {
+    font-family: couriernew, courier, monospace;
+}
+
+small {
+    font-size: 12px;
+}
+
+ul, ol {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+sup {
+    vertical-align: text-top;
+}
+
+sub {
+    vertical-align: text-bottom;
+}
+
+legend {
+    color: #000;
+}
+
+fieldset, img {
+    border: 0;
+}
+
+button, input, select, textarea {
+    font-size: 100%;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+
+.nav > li > a:hover {
+    color: #262626;
+    text-decoration: none;
+    background-color: #354144;
+}
+
+.open > a {
+    background-color: #354144 !important;
+}
+
+.right {
+    float: right;
+}
+
+.grid:hover {
+    background: #efefef;
+}

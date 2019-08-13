@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blog.mapper.BlogUserMapper">
+    <resultMap id="BaseResultMap" type="com.blog.entity.pojo.BlogUser">
+        <id column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="qq_open_id" jdbcType="VARCHAR" property="qqOpenId"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="nickname" jdbcType="VARCHAR" property="nickname"/>
+        <result column="qq_nickname" jdbcType="VARCHAR" property="qqNickname"/>
+        <result column="wechat_nickename" jdbcType="VARCHAR" property="wechatNickename"/>
+        <result column="birth_date" jdbcType="DATE" property="birthDate"/>
+        <result column="sex" property="sex" jdbcType="INTEGER" javaType="INTEGER"
+                typeHandler="com.blog.handler.SexHandler"/>
+        <result column="figure_url" jdbcType="VARCHAR" property="figureUrl"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="user_status" jdbcType="INTEGER" property="userStatus"
+                typeHandler="com.blog.handler.EnableHandler"/>
+        <result column="last_password_reset_date" jdbcType="TIMESTAMP" property="lastPasswordResetDate"/>
+        <result column="last_user_login_date" jdbcType="TIMESTAMP" property="lastUserLoginDate"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        user_id,qq_open_id,username, password, nickname, qq_nickname, wechat_nickename, birth_date,
+        sex, figure_url, create_date, email, phone, user_status, last_password_reset_date,
+        last_user_login_date
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from blog_user
+        where user_id = #{userId,jdbcType=INTEGER}
+    </select>
+
+    <select id="getUserByName" resultType="com.blog.security.SecurityBlogUser">
+        SELECT *
+        FROM blog_user
+        WHERE USERNAME = #{username}
+    </select>
+    <select id="checkEmail" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM blog_user
+        WHERE email = #{email}
+    </select>
+
+    <select id="checkPhone" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM blog_user
+        WHERE phone = #{phone}
+    </select>
+    <select id="selectBlogUserById" parameterType="java.lang.Integer" resultType="com.blog.security.SecurityBlogUser">
+        SELECT user_id,
+               qq_open_id,
+               username,
+               password,
+               nickname,
+               qq_nickname,
+               wechat_nickename,
+               birth_date,
+               sex,
+               figure_url,
+               create_date,
+               email,
+               phone,
+               user_status,
+               last_password_reset_date,
+               last_user_login_date
+        FROM blog_user bu
+        WHERE bu.user_id = #{userId}
+    </select>
+    <select id="selectOpenIdForQQLogin" resultType="java.lang.Integer">
+        select count(*)
+        from blog_user
+        where qq_open_id = #{openId,jdbcType=VARCHAR}
+    </select>
+    <select id="selectBlogUserByQQOpenId" resultType="com.blog.security.SecurityBlogUser">
+        select user_id,
+               qq_open_id,
+               username,
+               password,
+               nickname,
+               qq_nickname,
+               wechat_nickename,
+               birth_date,
+               sex,
+               figure_url,
+               create_date,
+               email,
+               phone,
+               user_status,
+               last_password_reset_date,
+               last_user_login_date
+        from blog_user
+        where qq_open_id = #{openId,jdbcType=VARCHAR}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from blog_user
+        where user_id = #{userId,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="com.blog.entity.pojo.BlogUser">
+        insert into blog_user (user_id, username, password,
+                               nickname, qq_nickname, wechat_nickename,
+                               birth_date, sex, figure_url,
+                               create_date, email, phone,
+                               user_status, last_password_reset_date, last_user_login_date)
+        values (#{userId,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
+                #{nickname,jdbcType=VARCHAR}, #{qqNickname,jdbcType=VARCHAR}, #{wechatNickename,jdbcType=VARCHAR},
+                #{birthDate,jdbcType=DATE}, #{sex.getId()}, #{figureUrl,jdbcType=VARCHAR},
+                #{createDate,jdbcType=TIMESTAMP}, #{email,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR},
+                #{userStatus.getId(),jdbcType=INTEGER}, #{lastPasswordResetDate,jdbcType=TIMESTAMP},
+                #{lastUserLoginDate,jdbcType=TIMESTAMP})
+    </insert>
+
+    <insert id="insertUser" useGeneratedKeys="true" keyProperty="userId" keyColumn="user_id"
+            parameterType="com.blog.entity.pojo.BlogUser">
+        insert into blog_user(username, password, nickname, figure_url, email, phone, last_password_reset_date)
+        values (#{username}, #{password}, #{nickname}, #{figureUrl}, #{username}, #{phone}, #{lastPasswordResetDate})
+    </insert>
+
+    <!--插入用户返回用户主键-->
+    <insert id="insertSelective" useGeneratedKeys="true" keyProperty="userId"
+            parameterType="com.blog.entity.pojo.BlogUser">
+        insert into blog_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="username != null">
+                username,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="nickname != null">
+                nickname,
+            </if>
+            <if test="qqNickname != null">
+                qq_nickname,
+            </if>
+            <if test="wechatNickename != null">
+                wechat_nickename,
+            </if>
+            <if test="birthDate != null">
+                birth_date,
+            </if>
+            <if test="sex.getId() != null">
+                sex.getId(),
+            </if>
+            <if test="figureUrl != null">
+                figure_url,
+            </if>
+            <if test="createDate != null">
+                create_date,
+            </if>
+            <if test="email != null">
+                email,
+            </if>
+            <if test="phone != null">
+                phone,
+            </if>
+            <if test="userStatus.getId() != null">
+                user_status,
+            </if>
+            <if test="lastPasswordResetDate != null">
+                last_password_reset_date,
+            </if>
+            <if test="lastUserLoginDate != null">
+                last_user_login_date,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="username != null">
+                #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="nickname != null">
+                #{nickname,jdbcType=VARCHAR},
+            </if>
+            <if test="qqNickname != null">
+                #{qqNickname,jdbcType=VARCHAR},
+            </if>
+            <if test="wechatNickename != null">
+                #{wechatNickename,jdbcType=VARCHAR},
+            </if>
+            <if test="birthDate != null">
+                #{birthDate,jdbcType=DATE},
+            </if>
+            <if test="sex.getId() != null">
+                #{sex.getId(),jdbcType=INTEGER},
+            </if>
+            <if test="figureUrl != null">
+                #{figureUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="createDate != null">
+                #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="email != null">
+                #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="userStatus.getId() != null">
+                #{userStatus.getId(),jdbcType=INTEGER},
+            </if>
+            <if test="lastPasswordResetDate != null">
+                #{lastPasswordResetDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastUserLoginDate != null">
+                #{lastUserLoginDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <insert id="insertBlogUserForQQLogin" useGeneratedKeys="true" keyProperty="userId">
+        insert into blog_user(qq_open_id, nickname, qq_nickname, sex, figure_url)
+        values (#{qqOpenId}, #{nickname}, #{qqNickname}, #{sex}, #{figureUrl})
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.blog.entity.pojo.BlogUser">
+        update blog_user
+        <set>
+            <if test="username != null">
+                username = #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="nickname != null">
+                nickname = #{nickname,jdbcType=VARCHAR},
+            </if>
+            <if test="qqNickname != null">
+                qq_nickname = #{qqNickname,jdbcType=VARCHAR},
+            </if>
+            <if test="wechatNickename != null">
+                wechat_nickename = #{wechatNickename,jdbcType=VARCHAR},
+            </if>
+            <if test="birthDate != null">
+                birth_date = #{birthDate,jdbcType=DATE},
+            </if>
+            <if test="sex.getId() != null">
+                sex = #{sex.getId(),jdbcType=INTEGER},
+            </if>
+            <if test="figureUrl != null">
+                figure_url = #{figureUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="createDate != null">
+                create_date = #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="email != null">
+                email = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                phone = #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="userStatus.getId() != null">
+                user_status = #{userStatus.getId(),jdbcType=INTEGER},
+            </if>
+            <if test="lastPasswordResetDate != null">
+                last_password_reset_date = #{lastPasswordResetDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastUserLoginDate != null">
+                last_user_login_date = #{lastUserLoginDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where user_id = #{userId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.blog.entity.pojo.BlogUser">
+        update blog_user
+        set username                 = #{username,jdbcType=VARCHAR},
+            password                 = #{password,jdbcType=VARCHAR},
+            nickname                 = #{nickname,jdbcType=VARCHAR},
+            qq_nickname              = #{qqNickname,jdbcType=VARCHAR},
+            wechat_nickename         = #{wechatNickename,jdbcType=VARCHAR},
+            birth_date               = #{birthDate,jdbcType=DATE},
+            sex                      = #{sex.getId()},
+            figure_url               = #{figureUrl,jdbcType=VARCHAR},
+            create_date              = #{createDate,jdbcType=TIMESTAMP},
+            email                    = #{email,jdbcType=VARCHAR},
+            phone                    = #{phone,jdbcType=VARCHAR},
+            user_status              = #{userStatus.getId(),jdbcType=INTEGER},
+            last_password_reset_date = #{lastPasswordResetDate,jdbcType=TIMESTAMP},
+            last_user_login_date     = #{lastUserLoginDate,jdbcType=TIMESTAMP}
+        where user_id = #{userId,jdbcType=INTEGER}
+    </update>
+
+    <!--更新用户的最后登录时间-->
+    <update id="updateUserLoginTime">
+        UPDATE blog_user
+        SET last_user_login_date = #{lastUserLoginDate}
+        WHERE user_id = #{userId}
+    </update>
+    <update id="updateBlogUserForQQLogin" useGeneratedKeys="true" keyProperty="userId" keyColumn="user_id"
+            parameterType="com.blog.security.SecurityBlogUser">
+        update blog_user
+        set nickname             = #{nickname,jdbcType=VARCHAR},
+            qq_nickname          = #{qqNickname,jdbcType=VARCHAR},
+            sex                  = #{sex},
+            figure_url           = #{figureUrl,jdbcType=VARCHAR},
+            last_user_login_date = #{lastUserLoginDate,jdbcType=TIMESTAMP}
+        where qq_open_id = #{qqOpenId,jdbcType=VARCHAR}
+    </update>
+</mapper>

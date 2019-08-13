@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blog.mapper.BlogCourseMapper">
+    <resultMap id="BaseResultMap" type="com.blog.entity.pojo.BlogCourse">
+        <id column="course_id" jdbcType="INTEGER" property="courseId"/>
+        <result column="course_name" jdbcType="VARCHAR" property="courseName"/>
+        <result column="lan_id" jdbcType="INTEGER" property="lanId"/>
+        <result column="is_delete" jdbcType="INTEGER" property="isDelete"/>
+    </resultMap>
+    <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.blog.entity.pojo.BlogCourse">
+        <result column="course_value" jdbcType="LONGVARCHAR" property="courseValue"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        course_id, course_name, lan_id, is_delete
+    </sql>
+    <sql id="Blob_Column_List">
+        course_value
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from blog_course
+        where course_id = #{courseId,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectLeftMenu" resultType="com.blog.entity.pojo.BlogCourse" parameterType="java.lang.Integer">
+        SELECT course_id, course_name
+        FROM blog_course
+        WHERE lan_id = #{menuId}
+        ORDER BY course_id
+    </select>
+
+    <select id="selectAllCourseName" resultType="com.blog.entity.pojo.BlogCourse">
+        SELECT course_name, course_id, lan_id
+        FROM blog_course
+    </select>
+
+    <select id="selectCourseByName" resultType="com.blog.entity.pojo.BlogCourse" parameterType="java.lang.String">
+        select course_id
+        from blog_course
+        where course_name = #{name}
+    </select>
+    <select id="selectCourseById" resultType="com.blog.entity.pojo.BlogCourse" parameterType="java.lang.Integer">
+        select *
+        from blog_course
+        where course_id = #{id}
+    </select>
+    <select id="selectCourseLikeName" resultType="com.blog.entity.pojo.BlogCourse">
+        SELECT course_id, course_name
+        FROM blog_course
+        WHERE course_name LIKE #{keyword}
+    </select>
+    <select id="selectAllTechnologyStack" resultType="com.blog.entity.pojo.TechnologyStack">
+        SELECT *
+        FROM technology_stack
+        ORDER BY lan_id
+    </select>
+    <select id="selectAllLanType" resultType="com.blog.entity.pojo.TechnologyStack">
+        SELECT DISTINCT lan_type_id, lan_type_name
+        FROM technology_stack
+        ORDER BY lan_type_id
+    </select>
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from blog_course
+        where course_id = #{courseId,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="com.blog.entity.pojo.BlogCourse">
+        insert into blog_course (course_id, course_name, lan_id,
+                                 is_delete, course_value)
+        values (#{courseId,jdbcType=INTEGER}, #{courseName,jdbcType=VARCHAR}, #{lanId,jdbcType=INTEGER},
+                #{isDelete,jdbcType=INTEGER}, #{courseValue,jdbcType=LONGVARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.blog.entity.pojo.BlogCourse">
+        insert into blog_course
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="courseId != null">
+                course_id,
+            </if>
+            <if test="courseName != null">
+                course_name,
+            </if>
+            <if test="lanId != null">
+                lan_id,
+            </if>
+            <if test="isDelete != null">
+                is_delete,
+            </if>
+            <if test="courseValue != null">
+                course_value,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="courseId != null">
+                #{courseId,jdbcType=INTEGER},
+            </if>
+            <if test="courseName != null">
+                #{courseName,jdbcType=VARCHAR},
+            </if>
+            <if test="lanId != null">
+                #{lanId,jdbcType=INTEGER},
+            </if>
+            <if test="isDelete != null">
+                #{isDelete,jdbcType=INTEGER},
+            </if>
+            <if test="courseValue != null">
+                #{courseValue,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.blog.entity.pojo.BlogCourse">
+        update blog_course
+        <set>
+            <if test="courseName != null">
+                course_name = #{courseName,jdbcType=VARCHAR},
+            </if>
+            <if test="lanId != null">
+                lan_id = #{lanId,jdbcType=INTEGER},
+            </if>
+            <if test="isDelete != null">
+                is_delete = #{isDelete,jdbcType=INTEGER},
+            </if>
+            <if test="courseValue != null">
+                course_value = #{courseValue,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where course_id = #{courseId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.blog.entity.pojo.BlogCourse">
+        update blog_course
+        set course_name  = #{courseName,jdbcType=VARCHAR},
+            lan_id       = #{lanId,jdbcType=INTEGER},
+            is_delete    = #{isDelete,jdbcType=INTEGER},
+            course_value = #{courseValue,jdbcType=LONGVARCHAR}
+        where course_id = #{courseId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.blog.entity.pojo.BlogCourse">
+        update blog_course
+        set course_name = #{courseName,jdbcType=VARCHAR},
+            lan_id      = #{lanId,jdbcType=INTEGER},
+            is_delete   = #{isDelete,jdbcType=INTEGER}
+        where course_id = #{courseId,jdbcType=INTEGER}
+    </update>
+</mapper>
