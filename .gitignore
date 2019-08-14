@@ -8,6 +8,7 @@ HELP.md
 /target/surefire-reports/
 /target/test-classes/
 *.original
+#######
 
 !.mvn/wrapper/maven-wrapper.jar
 
